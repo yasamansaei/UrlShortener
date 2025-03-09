@@ -42,7 +42,7 @@ app.UseStaticFiles();
 
 app.MapShortnerUrl();
 app.MapRedirectUrl();
-app.MapMetricUrl();
+//app.MapMetricUrl();
 
 
 app.UseSwagger();

@@ -5,22 +5,26 @@ using ShortenerURLService.Services;
 using ShortenerURLService.Utilities;
 
 namespace ShortenerURLService.Endpoints;
+public class UrlRequest
+{
+    public string Url { get; set; }
+}
 public static class ShortnerUrlEndPoint
 {
     public static void MapShortnerUrl(this IEndpointRouteBuilder endpoint)
     {
-        endpoint.MapGet("/GetShortenerUrl", async (
+        endpoint.MapPost("/GetShortenerUrl", async (
             ShortenerUrlContext context
             , ShortenerUrlService _shortenerUrlService
             , CancellationToken cancellationToken
-            , [FromQuery(Name = "url_long")] string Url) =>
+            ,[FromBody] UrlRequest UrlRequest) =>
         {
 
-            var result = Validations.ValidateUrl(Url);
+            var result = Validations.ValidateUrl(UrlRequest.Url);
 
             if (!result.IsNotValid)
             {
-                var shortUrl = await _shortenerUrlService.GetUrlCodeAsync(Url, cancellationToken);
+                var shortUrl = await _shortenerUrlService.GetUrlCodeAsync(UrlRequest.Url, cancellationToken);
                 return Results.Ok(shortUrl);
             }
             else
@@ -30,12 +34,12 @@ public static class ShortnerUrlEndPoint
         });
     }
 
-    public static void MapMetricUrl(this IEndpointRouteBuilder endpoint)
-    {
-        endpoint.MapGet("/GetMtrics",(ShortenerUrlService shortenerUrl)=>
-        {
-            var tt = shortenerUrl.GetMetrics();
-            return Results.Ok(new { shortCode=tt.shor,RedirectUrl=tt.redirect});
-        });
-    }
+    //public static void MapMetricUrl(this IEndpointRouteBuilder endpoint)
+    //{
+    //    endpoint.MapGet("/GetMtrics",(ShortenerUrlService shortenerUrl)=>
+    //    {
+    //        var tt = shortenerUrl.GetMetrics();
+    //        return Results.Ok(new { shortCode=tt.shor,RedirectUrl=tt.redirect});
+    //    });
+    //}
 }
